@@ -21,4 +21,4 @@
 
 ## Ссылка на проект:
 
-http://alenarakhmanova.github.io/react-mesto-auth
+http://alenarakhmanova.github.io/my-profile
