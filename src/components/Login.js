@@ -1,22 +1,11 @@
-import { useState } from "react";
+import useFormAndValidation from "../hooks/useFormAndValidation";
 
 function Login({ handleLogin }) {
-  const [formValue, setFormValue] = useState({
-    password: "",
-    email: "",
-  });
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormValue({
-      ...formValue,
-      [name]: value,
-    });
-  }
+  const { values, handleChange, errors, isValid } = useFormAndValidation();
 
   function handleSubmit(e) {
     e.preventDefault();
-    const { password, email } = formValue;
+    const { password, email } = values;
     handleLogin(password, email);
   }
 
@@ -39,10 +28,14 @@ function Login({ handleLogin }) {
           className="auth__field auth__field_value_name"
           minLength="2"
           maxLength="100"
-          value={formValue.email}
+          value={values.email || ""}
           onChange={handleChange}
         />
-        <span className="auth__field-error name-field-error"></span>
+        <span
+          className={`auth__field-error name-field-error ${!isValid && "auth__field-error_active"}`}
+        >
+          {errors.email}
+        </span>
         <input
           type="password"
           id="password"
@@ -52,10 +45,14 @@ function Login({ handleLogin }) {
           className="auth__field auth__field_value_info"
           minLength="2"
           maxLength="30"
-          value={formValue.password}
+          value={values.password || ""}
           onChange={handleChange}
         />
-        <span className="auth__field-error info-field-error"></span>
+        <span
+          className={`auth__field-error info-field-error ${!isValid && "auth__field-error_active"}`}
+        >
+          {errors.password}
+        </span>
         <button type="submit" className="auth__button-save">
           Войти
         </button>

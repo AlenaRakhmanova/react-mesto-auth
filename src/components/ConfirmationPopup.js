@@ -15,6 +15,7 @@ function ConfirmationPopup({ isOpen, onClose, onConfirm }) {
       textButton={"Да"}
       typeButton={"submit"}
       onSubmit={handleConfirmationDelete}
+      isValid={true}
     ></PopupWithForm>
   );
 }

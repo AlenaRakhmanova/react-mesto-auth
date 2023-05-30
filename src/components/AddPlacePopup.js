@@ -1,28 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import PopupWithForm from "./PopupWithForm";
+import useFormAndValidation from "../hooks/useFormAndValidation";
 
 function AddPlacePopup({ isOpen, onClose, onAddPlace, textButton }) {
-  const [place, setPlace] = useState("");
-  const [photo, setPhoto] = useState("");
+  const { values, handleChange, errors, isValid, resetForm } = useFormAndValidation();
 
   useEffect(() => {
     if (isOpen) {
-      setPlace("");
-      setPhoto("");
+      resetForm();
     }
   }, [isOpen]);
 
-  function addPlace(e) {
-    setPlace(e.target.value);
-  }
-
-  function addPhoto(e) {
-    setPhoto(e.target.value);
-  }
-
   function handleSubmitNewPlace(e) {
     e.preventDefault();
-    onAddPlace({ name: place, link: photo });
+    onAddPlace({ name: values.place, link: values.photo });
   }
 
   return (
@@ -35,6 +26,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textButton }) {
       typeButton={"submit"}
       method={"post"}
       onSubmit={handleSubmitNewPlace}
+      isValid={isValid}
     >
       <input
         type="text"
@@ -45,10 +37,16 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textButton }) {
         className="popup__field popup__field_value_place"
         minLength="2"
         maxLength="30"
-        value={place}
-        onChange={addPlace}
+        value={values.place || ""}
+        onChange={handleChange}
       />
-      <span className="popup__field-error place-field-error"></span>
+      <span
+        className={`popup__field-error place-field-error ${
+          !isValid && "popup__field-error_active"
+        }`}
+      >
+        {errors.place}
+      </span>
       <input
         type="url"
         id="photo"
@@ -56,10 +54,16 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textButton }) {
         placeholder="Ссылка на картинку"
         required
         className="popup__field popup__field_value_photo"
-        value={photo}
-        onChange={addPhoto}
+        value={values.photo || ""}
+        onChange={handleChange}
       />
-      <span className="popup__field-error photo-field-error"></span>
+      <span
+        className={`popup__field-error place-field-error ${
+          !isValid && "popup__field-error_active"
+        }`}
+      >
+        {errors.photo}
+      </span>
     </PopupWithForm>
   );
 }

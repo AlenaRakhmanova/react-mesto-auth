@@ -1,5 +1,5 @@
 function Footer() {
-  return <footer className="footer">© 2020 Mesto Russia</footer>;
+  return <footer className="footer">©{new Date().getFullYear()} Mesto Russia</footer>;
 }
 
 export default Footer;

@@ -14,7 +14,8 @@ import Register from "./Register";
 import { api } from "../utils/Api.js";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import ProtectedRoute from "./ProtectedRoute";
-import * as authApi from "./Auth.js";
+// import * as authApi from "./Auth.js";
+import { auth } from "./Auth.js";
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
@@ -165,47 +166,48 @@ function App() {
   }
 
   function handleRegister(password, email) {
-    authApi
+    auth
       .register(password, email)
       .then((data) => {
         if (data) {
-          openSuccessNotifications();
           setSuccess(true);
+          openSuccessNotifications();
           navigate("/sign-in", { replace: true });
         }
       })
       .catch((err) => {
         console.log(err);
-        openSuccessNotifications();
         setSuccess(false);
+        openSuccessNotifications();
       });
   }
 
   function handleLogin(password, email) {
-    authApi
+    auth
       .login(password, email)
       .then((data) => {
         if (data) {
           localStorage.setItem("token", data.token);
+          setUserData(email);
           setLoggedIn(true);
           navigate("/my-profile", { replace: true });
         }
       })
       .catch((err) => {
         console.log(err);
-        openSuccessNotifications();
         setSuccess(false);
+        openSuccessNotifications();
       });
   }
 
   function checkToken() {
     const token = localStorage.getItem("token");
-    authApi
+    auth
       .getContent(token)
       .then((data) => {
         if (data) {
-          setLoggedIn(true);
           setUserData(data.data.email);
+          setLoggedIn(true);
           navigate("/my-profile", { replace: true });
         } else {
           setLoggedIn(false);

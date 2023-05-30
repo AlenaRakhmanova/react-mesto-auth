@@ -1,33 +1,27 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import PopupWithForm from "./PopupWithForm";
+import useFormAndValidation from "../hooks/useFormAndValidation";
 
 function EditProfilePopup({ isOpen, onClose, onUpdateUser, textButton }) {
   const currentUser = useContext(CurrentUserContext);
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const { values, handleChange, errors, isValid, setValues } = useFormAndValidation();
 
   useEffect(() => {
     if (isOpen) {
-      setName(currentUser.name);
-      setDescription(currentUser.about);
+      setValues({
+        name: currentUser.name,
+        about: currentUser.about,
+      });
     }
   }, [currentUser, isOpen]);
-
-  function changeName(e) {
-    setName(e.target.value);
-  }
-
-  function changeDescription(e) {
-    setDescription(e.target.value);
-  }
 
   function handleSubmit(e) {
     e.preventDefault();
     onUpdateUser({
-      name,
-      about: description,
+      name: values.name,
+      about: values.about,
     });
   }
 
@@ -41,6 +35,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, textButton }) {
       typeButton={"submit"}
       method={"post"}
       onSubmit={handleSubmit}
+      isValid={isValid}
     >
       <input
         type="text"
@@ -51,23 +46,35 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser, textButton }) {
         className="popup__field popup__field_value_name"
         minLength="2"
         maxLength="40"
-        value={name}
-        onChange={changeName}
+        value={values.name || ""}
+        onChange={handleChange}
       />
-      <span className="popup__field-error name-field-error"></span>
+      <span
+        className={`popup__field-error place-field-error ${
+          !isValid && "popup__field-error_active"
+        }`}
+      >
+        {errors.name}
+      </span>
       <input
         type="text"
-        id="info"
-        name="info"
+        id="about"
+        name="about"
         placeholder="О себе"
         required
         className="popup__field popup__field_value_info"
         minLength="2"
         maxLength="200"
-        value={description}
-        onChange={changeDescription}
+        value={values.about || ""}
+        onChange={handleChange}
       />
-      <span className="popup__field-error info-field-error"></span>
+      <span
+        className={`popup__field-error place-field-error ${
+          !isValid && "popup__field-error_active"
+        }`}
+      >
+        {errors.about}
+      </span>
     </PopupWithForm>
   );
 }
